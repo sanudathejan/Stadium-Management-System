@@ -2,7 +2,7 @@
 
 A Stadium Seat Booking and Management System is a Java-based project designed to let users reserve seats for events, track seat availability, and manage stadium operations efficiently. This system is ideal for a group of CS undergraduates and highlights skills in Java, GUI development, SQL database management, and system design.
 
----------------------------Core Features-----------------------------------------
+---------------------------Core Features----------------------------------------
 
 User Registration & Login: Both users and administrators can register and securely log in to the system.
 

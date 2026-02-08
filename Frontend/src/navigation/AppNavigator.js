@@ -1,9 +1,9 @@
 import React from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { useAuth } from '../context/AuthContext';
@@ -32,31 +32,28 @@ import ManageEventsScreen from '../screens/admin/ManageEventsScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Custom Tab Bar Icon
-const TabIcon = ({ focused, iconName, color }) => {
-    if (focused) {
-        return (
-            <LinearGradient
-                colors={GRADIENTS.primary}
-                style={styles.activeTabIcon}
-            >
-                <Ionicons name={iconName} size={22} color={COLORS.white} />
-            </LinearGradient>
-        );
-    }
-    return <Ionicons name={iconName} size={24} color={color} />;
-};
-
 // Main Tab Navigator
 const MainTabs = () => {
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarStyle: styles.tabBar,
+                tabBarStyle: {
+                    position: 'absolute',
+                    backgroundColor: COLORS.backgroundLight,
+                    borderTopWidth: 1,
+                    borderTopColor: COLORS.border,
+                    height: 80,
+                    paddingBottom: 20,
+                    paddingTop: 10,
+                },
                 tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: COLORS.textMuted,
-                tabBarLabelStyle: styles.tabBarLabel,
+                tabBarLabelStyle: {
+                    fontSize: 11,
+                    fontWeight: '500',
+                    marginTop: 4,
+                },
                 tabBarShowLabel: true,
             }}
         >
@@ -64,8 +61,14 @@ const MainTabs = () => {
                 name="Home"
                 component={HomeScreen}
                 options={{
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabIcon focused={focused} iconName="home" color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <View style={focused ? styles.activeTabIcon : null}>
+                            <Ionicons
+                                name={focused ? "home" : "home-outline"}
+                                size={focused ? 20 : 24}
+                                color={focused ? COLORS.white : color}
+                            />
+                        </View>
                     ),
                 }}
             />
@@ -73,8 +76,14 @@ const MainTabs = () => {
                 name="Events"
                 component={HomeScreen}
                 options={{
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabIcon focused={focused} iconName="calendar" color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <View style={focused ? styles.activeTabIcon : null}>
+                            <Ionicons
+                                name={focused ? "calendar" : "calendar-outline"}
+                                size={focused ? 20 : 24}
+                                color={focused ? COLORS.white : color}
+                            />
+                        </View>
                     ),
                 }}
             />
@@ -82,8 +91,14 @@ const MainTabs = () => {
                 name="Bookings"
                 component={BookingsScreen}
                 options={{
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabIcon focused={focused} iconName="ticket" color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <View style={focused ? styles.activeTabIcon : null}>
+                            <Ionicons
+                                name={focused ? "ticket" : "ticket-outline"}
+                                size={focused ? 20 : 24}
+                                color={focused ? COLORS.white : color}
+                            />
+                        </View>
                     ),
                 }}
             />
@@ -91,8 +106,14 @@ const MainTabs = () => {
                 name="Profile"
                 component={ProfileScreen}
                 options={{
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabIcon focused={focused} iconName="person" color={color} />
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <View style={focused ? styles.activeTabIcon : null}>
+                            <Ionicons
+                                name={focused ? "person" : "person-outline"}
+                                size={focused ? 20 : 24}
+                                color={focused ? COLORS.white : color}
+                            />
+                        </View>
                     ),
                 }}
             />
@@ -142,18 +163,22 @@ const AppStack = () => {
     );
 };
 
+// Loading Screen
+const LoadingScreen = () => (
+    <View style={styles.loadingContainer}>
+        <View style={styles.loadingBox}>
+            <Ionicons name="american-football" size={60} color={COLORS.primary} />
+            <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 20 }} />
+        </View>
+    </View>
+);
+
 // Root Navigator
 const AppNavigator = () => {
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <LinearGradient colors={GRADIENTS.primary} style={styles.loadingGradient}>
-                    <Ionicons name="american-football" size={60} color={COLORS.white} />
-                </LinearGradient>
-            </View>
-        );
+        return <LoadingScreen />;
     }
 
     return (
@@ -164,24 +189,11 @@ const AppNavigator = () => {
 };
 
 const styles = StyleSheet.create({
-    tabBar: {
-        position: 'absolute',
-        backgroundColor: COLORS.backgroundLight,
-        borderTopWidth: 1,
-        borderTopColor: COLORS.border,
-        height: 80,
-        paddingBottom: 20,
-        paddingTop: 10,
-    },
-    tabBarLabel: {
-        fontSize: FONTS.sizes.xs,
-        fontWeight: FONTS.weights.medium,
-        marginTop: 4,
-    },
     activeTabIcon: {
         width: 44,
         height: 44,
         borderRadius: 14,
+        backgroundColor: COLORS.primary,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -191,10 +203,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: COLORS.background,
     },
-    loadingGradient: {
+    loadingBox: {
         width: 120,
         height: 120,
         borderRadius: 30,
+        backgroundColor: COLORS.backgroundLight,
         justifyContent: 'center',
         alignItems: 'center',
     },
